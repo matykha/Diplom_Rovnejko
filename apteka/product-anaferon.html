@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анаферон — Аптека</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a6b4a;
+    --green-light: #2e9b6f;
+    --green-pale: #e8f5ef;
+    --teal: #0d7a6e;
+    --cream: #faf9f6;
+    --dark: #162520;
+    --gray: #6b7a74;
+    --border: #d4e4dc;
+    --white: #ffffff;
+    --red: #d64040;
+    --orange: #e07a30;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--cream); color: var(--dark); font-size: 15px; line-height: 1.6; }
+
+  /* HEADER */
+  header { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .header-top { background: var(--green); color: white; text-align: center; font-size: 12px; padding: 6px; letter-spacing: 0.5px; }
+  .header-main { max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 24px; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--green); text-decoration: none; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+  .search-bar { flex: 1; display: flex; border: 2px solid var(--green); border-radius: 8px; overflow: hidden; }
+  .search-bar input { flex: 1; border: none; padding: 10px 16px; font-size: 14px; font-family: inherit; outline: none; background: #f7faf8; }
+  .search-bar button { background: var(--green); border: none; padding: 10px 20px; color: white; cursor: pointer; font-size: 16px; }
+  .cart-btn { background: var(--green-pale); border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--green); display: flex; align-items: center; gap: 6px; }
+  nav { background: var(--white); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; gap: 0; }
+  .nav-inner a { text-decoration: none; color: var(--gray); font-size: 13px; font-weight: 500; padding: 12px 16px; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .nav-inner a:hover { color: var(--green); border-bottom-color: var(--green); }
+
+  /* BREADCRUMB */
+  .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 16px 24px 0; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray); }
+  .breadcrumb a { color: var(--green); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb span { color: var(--gray); }
+
+  /* PRODUCT HERO */
+  .product-hero { max-width: 1200px; margin: 0 auto; padding: 24px 24px 40px; display: grid; grid-template-columns: 340px 1fr; gap: 48px; align-items: start; }
+
+  .product-visual { background: linear-gradient(135deg, #f0f7f3 0%, #e0f2ea 100%); border-radius: 20px; border: 1px solid var(--border); padding: 48px 40px; display: flex; flex-direction: column; align-items: center; gap: 20px; position: sticky; top: 100px; }
+  .product-icon { font-size: 96px; line-height: 1; }
+  .product-badge-big { font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-rx { background: #fce8e8; color: var(--red); }
+  .badge-otc { background: var(--green-pale); color: var(--green); }
+  .badge-sale { background: #fff3e0; color: var(--orange); }
+  .badge-generic { background: #e8eaf6; color: #3949ab; }
+
+  .price-block { text-align: center; }
+  .price-main { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: var(--green); line-height: 1; }
+  .price-old { font-size: 18px; color: var(--gray); text-decoration: line-through; display: block; margin-top: 4px; }
+  .price-note { font-size: 11px; color: var(--gray); margin-top: 6px; }
+
+  .btn-primary { width: 100%; background: var(--green); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s; margin-bottom: 10px; }
+  .btn-primary:hover { background: var(--green-light); }
+  .btn-secondary { width: 100%; background: transparent; color: var(--green); border: 2px solid var(--green); padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { background: var(--green-pale); }
+
+  /* PRODUCT INFO */
+  .product-info { padding-top: 8px; }
+  .product-cat-tag { font-size: 12px; color: var(--teal); background: #e0f2ea; border-radius: 4px; padding: 3px 10px; display: inline-block; margin-bottom: 12px; }
+  .product-title { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; }
+  .product-inn-line { font-size: 14px; color: var(--gray); margin-bottom: 20px; }
+  .product-inn-line span { background: var(--green-pale); color: var(--green); padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-left: 8px; }
+
+  .warning-box { background: #fff8e1; border: 1px solid #ffe082; border-left: 4px solid #f9a825; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #5d4037; margin-bottom: 24px; }
+
+  .info-section { margin-bottom: 28px; }
+  .info-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--green); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .info-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .info-text { font-size: 14px; line-height: 1.8; color: #334d44; }
+
+  /* AVAILABILITY TABLE */
+  .avail-table { width: 100%; border-collapse: collapse; font-size: 13px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .avail-table th { background: var(--green-pale); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; }
+  .avail-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .avail-table tr:last-child td { border-bottom: none; }
+  .avail-table tr:hover td { background: #f5faf7; }
+  .price-cell { font-weight: 700; color: var(--green); font-size: 15px; font-family: 'Playfair Display', serif; }
+  .hours-cell { font-size: 11px; color: var(--gray); }
+  .addr-icon { margin-right: 4px; }
+
+  /* ANALOGS */
+  .analog-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: #f8faf9; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+  .analog-name { font-weight: 500; }
+  .analog-right { display: flex; align-items: center; gap: 8px; }
+  .economy-tag { font-size: 11px; background: var(--green-pale); color: var(--green); padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+
+  /* BOOKING FORM */
+  .booking-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-top: 28px; }
+  .booking-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .booking-subtitle { font-size: 13px; color: var(--gray); margin-bottom: 20px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-row { display: flex; flex-direction: column; gap: 5px; }
+  .form-row label { font-size: 12px; font-weight: 500; color: var(--gray); }
+  .form-row input, .form-row select { border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; background: #fafafa; }
+  .form-row input:focus, .form-row select:focus { border-color: var(--green); background: white; }
+  .form-row.full { grid-column: 1 / -1; }
+  .btn-book-full { width: 100%; background: var(--green); color: white; border: none; padding: 15px; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s; }
+  .btn-book-full:hover { background: var(--green-light); }
+  .book-notice { font-size: 11px; color: var(--gray); text-align: center; margin-top: 10px; }
+
+  /* RELATED */
+  .related-section { max-width: 1200px; margin: 0 auto; padding: 0 24px 48px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .related-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .related-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-decoration: none; color: var(--dark); display: flex; align-items: center; gap: 14px; transition: all 0.2s; }
+  .related-card:hover { box-shadow: 0 4px 16px rgba(26,107,74,0.1); transform: translateY(-2px); border-color: var(--green); }
+  .related-icon { font-size: 36px; background: var(--green-pale); border-radius: 10px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .related-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+  .related-price { font-size: 13px; color: var(--green); font-weight: 700; font-family: 'Playfair Display', serif; }
+
+  /* FOOTER */
+  footer { background: var(--dark); color: rgba(255,255,255,0.7); padding: 32px 24px 20px; }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; font-size: 12px; align-items: center; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 20px; color: white; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 12px; }
+  .footer-links a:hover { color: white; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: white; padding: 14px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 300; transform: translateY(80px); opacity: 0; transition: all 0.3s; max-width: 300px; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* SUCCESS */
+  .success-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  .success-overlay.open { display: flex; }
+  .success-card { background: white; border-radius: 16px; padding: 48px 32px; text-align: center; max-width: 380px; animation: popIn 0.3s ease; }
+  @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-icon { font-size: 56px; margin-bottom: 16px; }
+  .success-title { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 10px; }
+  .success-text { color: var(--gray); font-size: 14px; line-height: 1.7; margin-bottom: 20px; }
+
+  /* ---- CART MODAL ---- */
+  .cart-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:500; justify-content:flex-end; }
+  .cart-modal.open { display:flex; }
+  .cart-panel { background:var(--white); width:480px; max-width:100vw; height:100%; display:flex; flex-direction:column; animation:slideIn 0.28s ease; box-shadow:-8px 0 40px rgba(0,0,0,0.18); }
+  @keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
+  .cart-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .cart-header h2 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; }
+  .cart-close { background:none; border:none; font-size:22px; cursor:pointer; color:var(--gray); line-height:1; padding:4px; }
+  .cart-close:hover { color:var(--dark); }
+  .cart-body { flex:1; overflow-y:auto; padding:16px 24px; }
+  .cart-empty { text-align:center; padding:60px 20px; }
+  .cart-empty-icon { font-size:64px; margin-bottom:16px; }
+  .cart-empty-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; margin-bottom:6px; }
+  .cart-empty-sub { color:var(--gray); font-size:14px; margin-bottom:24px; }
+  .btn-to-catalog { display:inline-block; background:var(--green); color:white; text-decoration:none; padding:12px 24px; border-radius:10px; font-weight:600; font-size:14px; }
+  .cart-item { display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--border); }
+  .ci-icon { font-size:36px; width:50px; height:50px; background:var(--green-pale); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ci-info { flex:1; min-width:0; }
+  .ci-name { font-weight:600; font-size:14px; color:var(--dark); text-decoration:none; display:block; margin-bottom:2px; }
+  .ci-name:hover { color:var(--green); }
+  .ci-form { font-size:11px; color:var(--gray); margin-bottom:2px; }
+  .ci-price-unit { font-size:12px; color:var(--teal); }
+  .ci-controls { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .qty-btn { width:28px; height:28px; border:1.5px solid var(--border); border-radius:6px; background:white; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; color:var(--dark); }
+  .qty-btn:hover { border-color:var(--green); color:var(--green); }
+  .qty-val { width:28px; text-align:center; font-weight:600; font-size:15px; }
+  .ci-total { font-weight:700; font-size:14px; color:var(--green); font-family:'Playfair Display',serif; white-space:nowrap; flex-shrink:0; }
+  .ci-remove { background:none; border:none; cursor:pointer; color:var(--gray); font-size:14px; padding:4px; flex-shrink:0; }
+  .ci-remove:hover { color:var(--red); }
+  .cart-footer { padding:20px 24px; border-top:1px solid var(--border); background:var(--cream); }
+  .cart-summary { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .cart-items-count { font-size:13px; color:var(--gray); }
+  .cart-total-label { font-size:13px; color:var(--gray); }
+  .cart-total-amt { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--green); }
+  .cart-checkout-title { font-size:13px; font-weight:600; margin:16px 0 10px; }
+  .cart-form-row { display:flex; gap:10px; margin-bottom:10px; }
+  .cart-form-row input { flex:1; border:1.5px solid var(--border); border-radius:8px; padding:10px 12px; font-size:13px; font-family:inherit; outline:none; }
+  .cart-form-row input:focus { border-color:var(--green); }
+  .cart-form-row select { flex:1; border:1.5px solid var(--border); border-radius:8px; padding:10px 12px; font-size:13px; font-family:inherit; outline:none; background:white; }
+  .btn-checkout { width:100%; background:var(--green); color:white; border:none; padding:15px; border-radius:10px; font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; transition:background 0.2s; margin-top:4px; }
+  .btn-checkout:hover { background:var(--green-light); }
+  .btn-clear { width:100%; background:none; border:none; color:var(--gray); font-size:12px; cursor:pointer; margin-top:10px; font-family:inherit; }
+  .btn-clear:hover { color:var(--red); }
+  /* Order success modal */
+  .order-success-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:600; align-items:center; justify-content:center; }
+  .order-success-modal.open { display:flex; }
+  .order-success-card { background:white; border-radius:20px; padding:52px 36px; text-align:center; max-width:400px; width:90%; animation:popIn 0.3s ease; }
+  @keyframes popIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+  .os-icon { font-size:64px; margin-bottom:16px; }
+  .os-title { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; margin-bottom:10px; }
+  .os-text { color:var(--gray); font-size:14px; line-height:1.7; margin-bottom:24px; }
+  .btn-os-close { background:var(--green); color:white; border:none; padding:14px 32px; border-radius:10px; font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; }
+
+
+  /* ── Кнопки авторизации ── */
+  .auth-btn-wrap { display:flex; align-items:center; gap:8px; }
+  .auth-user-btn { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--dark); background:var(--green-pale); padding:8px 14px; border-radius:8px; font-size:13px; font-weight:500; transition:background 0.2s; }
+  .auth-user-btn:hover { background:var(--border); }
+  .auth-avatar { width:28px; height:28px; background:var(--green); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+  .auth-username { max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .auth-logout-btn { background:none; border:1.5px solid var(--border); padding:8px 14px; border-radius:8px; cursor:pointer; font-family:inherit; font-size:13px; color:var(--gray); transition:all 0.2s; }
+  .auth-logout-btn:hover { color:var(--red); border-color:var(--red); }
+  .auth-login-btn { background:var(--green); color:white; text-decoration:none; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; transition:background 0.2s; }
+  .auth-login-btn:hover { background:var(--green-light); }
+  .auth-register-btn { background:none; color:var(--green); text-decoration:none; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:500; border:1.5px solid var(--green); transition:all 0.2s; }
+  .auth-register-btn:hover { background:var(--green-pale); }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    🕐 Пн–Пт 8:00–20:00, Сб–Вс 9:00–18:00 &nbsp;|&nbsp; 📞 +375 (17) 123-45-67 &nbsp;|&nbsp; Бесплатная консультация фармацевта
+  </div>
+  <div class="header-main">
+    <a href="index.html" class="logo"><span>💊</span> Аптека</a>
+    <div class="search-bar">
+      <input type="text" placeholder="Поиск по названию, действующему веществу...">
+      <button onclick="window.location='index.html'">🔍</button>
+    </div>
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Корзина
+    </button>
+  </div>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html">Каталог</a>
+      <a href="index.html#seasonal">Сезонное</a>
+      <a href="index.html#consult">Консультация фармацевта</a>
+      <a href="index.html#about">О нас</a>
+    </div>
+  </nav>
+</header>
+
+<div class="breadcrumb">
+  <a href="index.html">Каталог</a>
+  <span>›</span>
+  <span>Противовирусные / Иммуномодуляторы</span>
+  <span>›</span>
+  <span>Анаферон</span>
+</div>
+
+<div class="product-hero">
+
+  <!-- LEFT: Visual & Price -->
+  <div class="product-visual">
+    <div class="product-badge-big badge-otc">Без рецепта</div>
+    <div class="product-icon">🛡️</div>
+    <div class="price-block">
+      <div class="price-main">4,80 руб.</div>
+      
+      <div class="price-note">Минимальная цена в сети</div>
+    </div>
+    <button class="btn-primary" onclick="document.getElementById('bookForm').scrollIntoView({behavior:'smooth'})">🔒 Забронировать</button>
+    <button class="btn-secondary" onclick="cartAdd({slug:'anaferon',name:'Анаферон',icon:'🛡️',price:'4,80',form:'Таблетки'})">🛒 В корзину</button>
+  </div>
+
+  <!-- RIGHT: Info -->
+  <div class="product-info">
+    <div class="product-cat-tag">Противовирусные / Иммуномодуляторы</div>
+    <h1 class="product-title">Анаферон</h1>
+    <div class="product-inn-line">
+      Антитела к интерферону
+      <span>Таблетки</span>
+    </div>
+
+    <div class="warning-box">
+      ⚕️ Перед применением проконсультируйтесь с врачом или фармацевтом. Информация носит справочный характер.
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">Описание</div>
+      <p class="info-text">Иммуномодулирующий препарат с противовирусной активностью. Содержит аффинно очищенные антитела к интерферону гамма. Стимулирует гуморальный и клеточный иммунный ответ. Применяется для профилактики и лечения ОРВИ и гриппа. Подходит для взрослых и детей от 1 месяца.</p>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">Способ применения и дозировка</div>
+      <p class="info-text">Лечение: 1-й день — 8 таблеток по схеме, со 2-го дня — по 3 таблетки в сутки. Профилактика — 1 таблетка в сутки. Таблетки держать во рту до растворения.</p>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">Противопоказания</div>
+      <p class="info-text">Гиперчувствительность к компонентам препарата, дефицит лактазы (содержит лактозу).</p>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">Условия хранения</div>
+      <p class="info-text">Хранить при температуре не выше 25 °C, в сухом защищённом от света месте.</p>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">📍 Наличие по аптекам</div>
+      <table class="avail-table">
+        <thead>
+          <tr>
+            <th>Адрес аптеки</th>
+            <th>Цена</th>
+            <th>Остаток</th>
+            <th>Режим работы</th>
+          </tr>
+        </thead>
+        <tbody>
+              <tr>
+                <td><span class="addr-icon">📍</span> ул. Ленина, 12</td>
+                <td class="price-cell">4,80 руб.</td>
+                <td>11 уп.</td>
+                <td class="hours-cell">8:00–20:00</td>
+              </tr>
+              <tr>
+                <td><span class="addr-icon">📍</span> ул. Притыцкого, 101</td>
+                <td class="price-cell">5,10 руб.</td>
+                <td>7 уп.</td>
+                <td class="hours-cell">8:00–22:00</td>
+              </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-section">
+      <div class="info-section-title">🔄 Аналоги (дженерики)</div>
+      
+            <div class="analog-row">
+              <span class="analog-name">Кагоцел</span>
+              <span class="analog-right"><strong>6,20 руб.</strong> </span>
+            </div>
+            <div class="analog-row">
+              <span class="analog-name">Арбидол (умифеновир)</span>
+              <span class="analog-right"><strong>7,40 руб.</strong> </span>
+            </div>
+    </div>
+
+    <!-- BOOKING FORM -->
+    <div class="booking-card" id="bookForm">
+      <div class="booking-title">📋 Забронировать на 3 часа</div>
+      <div class="booking-subtitle">Без регистрации. Укажите контакты — мы свяжемся с вами для подтверждения.</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Имя</label>
+          <input type="text" id="bName" placeholder="Ваше имя">
+        </div>
+        <div class="form-row">
+          <label>Телефон</label>
+          <input type="tel" id="bPhone" placeholder="+375 (XX) XXX-XX-XX">
+        </div>
+        <div class="form-row full">
+          <label>Выберите аптеку</label>
+          <select id="bPharmacy">
+            <option>ул. Ленина, 12 — 4,80 руб.</option><option>ул. Притыцкого, 101 — 5,10 руб.</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-book-full" onclick="submitBook()">🔒 Забронировать Анаферон</button>
+      <p class="book-notice">Товар будет зарезервирован на 3 часа. Предоплата не требуется.</p>
+    </div>
+  </div>
+</div>
+
+<!-- RELATED PRODUCTS -->
+<div class="related-section">
+  <h2 class="section-title">Другие препараты</h2>
+  <div class="related-grid">
+    <a href="product-nurofen.html" class="related-card">
+      <div class="related-icon">💊</div>
+      <div><div class="related-name">Нурофен</div><div class="related-price">3,20 руб.</div></div>
+    </a>
+    <a href="product-amoxicilin.html" class="related-card">
+      <div class="related-icon">🔴</div>
+      <div><div class="related-name">Амоксициллин</div><div class="related-price">5,80 руб.</div></div>
+    </a>
+    <a href="product-loratadin.html" class="related-card">
+      <div class="related-icon">🌸</div>
+      <div><div class="related-name">Лоратадин</div><div class="related-price">2,40 руб.</div></div>
+    </a>
+    <a href="product-vitamind.html" class="related-card">
+      <div class="related-icon">🌞</div>
+      <div><div class="related-name">Витамин D3</div><div class="related-price">8,50 руб.</div></div>
+    </a>
+    <a href="product-omeprazol.html" class="related-card">
+      <div class="related-icon">🟡</div>
+      <div><div class="related-name">Омепразол</div><div class="related-price">3,60 руб.</div></div>
+    </a>
+    <a href="product-anaferon.html" class="related-card">
+      <div class="related-icon">🛡️</div>
+      <div><div class="related-name">Анаферон</div><div class="related-price">4,80 руб.</div></div>
+    </a>
+    <a href="product-vitaminc.html" class="related-card">
+      <div class="related-icon">🍋</div>
+      <div><div class="related-name">Витамин C</div><div class="related-price">2,30 руб.</div></div>
+    </a>
+    <a href="product-hlorgesidine.html" class="related-card">
+      <div class="related-icon">🧴</div>
+      <div><div class="related-name">Хлоргексидин</div><div class="related-price">1,10 руб.</div></div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <div class="footer-logo">💊 Аптека</div>
+    <div class="footer-links">
+      <a href="index.html">Каталог</a>
+      <a href="index.html#consult">Консультация</a>
+      <a href="index.html#about">О нас</a>
+      <a href="https://rceth.by" target="_blank">Реестр лекарств РБ</a>
+    </div>
+    <span style="font-size:12px;">© 2026 Аптека</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Заявка отправлена!</div>
+    <p class="success-text">Мы зарезервировали <strong>Анаферон</strong> на 3 часа. Наш менеджер свяжется с вами в ближайшее время для подтверждения.</p>
+    <button class="btn-book-full" onclick="document.getElementById('successOverlay').classList.remove('open')">Хорошо</button>
+  </div>
+</div>
+
+
+
+<!-- ===== CART DRAWER ===== -->
+<div class="cart-modal" id="cartModal">
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h2>🛒 Корзина</h2>
+      <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-body" id="cartBody"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-summary">
+        <span class="cart-items-count" id="cartItemsCount"></span>
+        <span>
+          <span class="cart-total-label">Итого: </span>
+          <span class="cart-total-amt" id="cartTotalAmt"></span>
+        </span>
+      </div>
+      <div class="cart-checkout-title">Данные для бронирования:</div>
+      <div class="cart-form-row">
+        <input type="text" id="orderName" placeholder="Ваше имя">
+        <input type="tel" id="orderPhone" placeholder="+375 (XX) XXX-XX-XX">
+      </div>
+      <div class="cart-form-row">
+        <select id="orderPharmacy">
+          <option>ул. Ленина, 12 (8:00–20:00)</option>
+          <option>пр. Независимости, 45 (9:00–21:00)</option>
+          <option>ул. Притыцкого, 101 (8:00–22:00)</option>
+        </select>
+      </div>
+      <button class="btn-checkout" onclick="submitOrder()">🔒 Оформить бронь</button>
+      <button class="btn-clear" onclick="if(confirm('Очистить корзину?')) cartClear()">Очистить корзину</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ORDER SUCCESS ===== -->
+<div class="order-success-modal" id="orderSuccessModal">
+  <div class="order-success-card">
+    <div class="os-icon">✅</div>
+    <div class="os-title">Бронь оформлена!</div>
+    <p class="os-text">Ваш заказ зарезервирован на <strong>3 часа</strong>. Мы свяжемся с вами для подтверждения. Предоплата не требуется.</p>
+    <button class="btn-os-close" onclick="document.getElementById('orderSuccessModal').classList.remove('open')">Отлично!</button>
+  </div>
+</div>
+
+
+<script src="cart.js"></script>
+</body>
+</html>

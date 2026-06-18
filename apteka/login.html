@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вход и регистрация — Аптека</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a6b4a; --green-light: #2e9b6f; --green-pale: #e8f5ef;
+    --cream: #faf9f6; --dark: #162520; --gray: #6b7a74;
+    --border: #d4e4dc; --white: #ffffff; --red: #d64040;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+
+  /* HEADER */
+  header { background: var(--white); border-bottom: 1px solid var(--border); }
+  .header-top { background: var(--green); color: white; text-align: center; font-size: 12px; padding: 6px; }
+  .header-main { max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--green); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+
+  /* PAGE */
+  .page-wrap { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 120px); padding: 40px 20px; }
+  .auth-card { background: white; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 440px; overflow: hidden; box-shadow: 0 8px 40px rgba(26,107,74,0.10); }
+
+  /* TABS */
+  .tab-row { display: flex; border-bottom: 2px solid var(--border); }
+  .tab-btn { flex: 1; padding: 18px; background: none; border: none; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--gray); cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+
+  /* FORM */
+  .tab-content { display: none; padding: 32px; }
+  .tab-content.active { display: block; }
+  .form-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .form-sub { font-size: 13px; color: var(--gray); margin-bottom: 24px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+  .field input { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; background: #f9fbfa; }
+  .field input:focus { border-color: var(--green); background: white; }
+  .field input.error { border-color: var(--red); }
+  .field-error { font-size: 11px; color: var(--red); margin-top: 4px; display: none; }
+  .field-error.show { display: block; }
+
+  .btn-submit { width: 100%; background: var(--green); color: white; border: none; padding: 15px; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .btn-submit:hover { background: var(--green-light); }
+  .btn-submit:disabled { background: var(--gray); cursor: not-allowed; }
+
+  .alert { border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 16px; display: none; }
+  .alert.show { display: block; }
+  .alert-error { background: #fce8e8; color: var(--red); border: 1px solid #f5c6c6; }
+  .alert-success { background: var(--green-pale); color: var(--green); border: 1px solid var(--border); }
+
+  .pass-wrap { position: relative; }
+  .pass-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray); padding: 4px; }
+
+  .hint { font-size: 12px; color: var(--gray); text-align: center; margin-top: 16px; }
+  .hint a { color: var(--green); text-decoration: none; }
+
+  /* Spinner */
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: white; padding: 14px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 300; transform: translateY(80px); opacity: 0; transition: all 0.3s; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── Кнопки авторизации ── */
+  .auth-btn-wrap { display:flex; align-items:center; gap:8px; }
+  .auth-user-btn { display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--dark); background:var(--green-pale); padding:8px 14px; border-radius:8px; font-size:13px; font-weight:500; transition:background 0.2s; }
+  .auth-user-btn:hover { background:var(--border); }
+  .auth-avatar { width:28px; height:28px; background:var(--green); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+  .auth-username { max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .auth-logout-btn { background:none; border:1.5px solid var(--border); padding:8px 14px; border-radius:8px; cursor:pointer; font-family:inherit; font-size:13px; color:var(--gray); transition:all 0.2s; }
+  .auth-logout-btn:hover { color:var(--red); border-color:var(--red); }
+  .auth-login-btn { background:var(--green); color:white; text-decoration:none; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; transition:background 0.2s; }
+  .auth-login-btn:hover { background:var(--green-light); }
+  .auth-register-btn { background:none; color:var(--green); text-decoration:none; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:500; border:1.5px solid var(--green); transition:all 0.2s; }
+  .auth-register-btn:hover { background:var(--green-pale); }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">🕐 Пн–Пт 8:00–20:00, Сб–Вс 9:00–18:00 &nbsp;|&nbsp; 📞 +375 (17) 123-45-67</div>
+  <div class="header-main">
+    <a href="index.html" class="logo"><span>💊</span> Аптека</a>
+    <a href="index.html" style="font-size:13px;color:var(--gray);text-decoration:none;">← Вернуться в каталог</a>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <div class="auth-card">
+
+    <!-- TABS -->
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Вход</button>
+      <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">Регистрация</button>
+    </div>
+
+    <!-- ── ВХОД ── -->
+    <div class="tab-content active" id="panelLogin">
+      <div class="form-title">Добро пожаловать</div>
+      <div class="form-sub">Войдите, чтобы сохранить корзину и историю заказов</div>
+
+      <div class="alert alert-error" id="loginError"></div>
+
+      <div class="field">
+        <label>Логин</label>
+        <input type="text" id="loginLogin" placeholder="Ваш логин" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Пароль</label>
+        <div class="pass-wrap">
+          <input type="password" id="loginPassword" placeholder="Пароль" autocomplete="current-password">
+          <button class="pass-toggle" type="button" onclick="togglePass('loginPassword', this)">👁</button>
+        </div>
+      </div>
+      <button class="btn-submit" id="btnLogin" onclick="doLogin()">Войти</button>
+      <p class="hint">Нет аккаунта? <a href="#" onclick="switchTab('register'); return false;">Зарегистрироваться</a></p>
+    </div>
+
+    <!-- ── РЕГИСТРАЦИЯ ── -->
+    <div class="tab-content" id="panelRegister">
+      <div class="form-title">Создать аккаунт</div>
+      <div class="form-sub">Заполните данные — регистрация займёт меньше минуты</div>
+
+      <div class="alert alert-error"   id="regError"></div>
+      <div class="alert alert-success" id="regSuccess"></div>
+
+      <div class="field">
+        <label>Логин <span style="color:var(--red)">*</span></label>
+        <input type="text" id="regLogin" placeholder="Например: ivan_petrov" autocomplete="username">
+        <div class="field-error" id="errRegLogin">Минимум 3 символа, только буквы, цифры и _</div>
+      </div>
+      <div class="field">
+        <label>Полное имя</label>
+        <input type="text" id="regFullName" placeholder="Иван Петров" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>Телефон</label>
+        <input type="tel" id="regPhone" placeholder="+375 (XX) XXX-XX-XX" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label>Пароль <span style="color:var(--red)">*</span></label>
+        <div class="pass-wrap">
+          <input type="password" id="regPassword" placeholder="Минимум 6 символов" autocomplete="new-password">
+          <button class="pass-toggle" type="button" onclick="togglePass('regPassword', this)">👁</button>
+        </div>
+        <div class="field-error" id="errRegPassword">Минимум 6 символов</div>
+      </div>
+      <div class="field">
+        <label>Повторите пароль <span style="color:var(--red)">*</span></label>
+        <div class="pass-wrap">
+          <input type="password" id="regPassword2" placeholder="Повторите пароль" autocomplete="new-password">
+          <button class="pass-toggle" type="button" onclick="togglePass('regPassword2', this)">👁</button>
+        </div>
+        <div class="field-error" id="errRegPassword2">Пароли не совпадают</div>
+      </div>
+      <button class="btn-submit" id="btnRegister" onclick="doRegister()">Создать аккаунт</button>
+      <p class="hint">Уже есть аккаунт? <a href="#" onclick="switchTab('login'); return false;">Войти</a></p>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'api.php';
+
+/* ── Переключение табов ── */
+function switchTab(tab) {
+  document.getElementById('panelLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('panelRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+}
+
+/* ── Показать/скрыть пароль ── */
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── Загрузка кнопки ── */
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (loading) {
+    btn._orig = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span> Подождите...';
+    btn.disabled = true;
+  } else {
+    btn.innerHTML = btn._orig || btn.innerHTML;
+    btn.disabled = false;
+  }
+}
+
+/* ── ВХОД ── */
+async function doLogin() {
+  const login    = document.getElementById('loginLogin').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl    = document.getElementById('loginError');
+
+  errEl.classList.remove('show');
+
+  if (!login || !password) {
+    errEl.textContent = 'Заполните логин и пароль';
+    errEl.classList.add('show');
+    return;
+  }
+
+  setLoading('btnLogin', true);
+
+  try {
+    const res  = await fetch(API_BASE, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'login', login, password })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      // Сохраняем пользователя
+      localStorage.setItem('apteka_user', JSON.stringify({
+        id:       data.user.id,
+        login:    data.user.login,
+        fullName: data.user.full_name,
+        phone:    data.user.phone,
+        role:     data.user.role,
+        token:    data.token
+      }));
+
+      // Мёрдж корзины
+      await syncCartAfterLogin(data.token);
+
+      showToast('✅ Вход выполнен!');
+      setTimeout(() => {
+        const back = new URLSearchParams(location.search).get('back');
+        window.location.href = back || 'index.html';
+      }, 600);
+    } else {
+      errEl.textContent = data.error || 'Неверный логин или пароль';
+      errEl.classList.add('show');
+    }
+  } catch (e) {
+    // Нет сервера — демо-режим
+    demoLogin(login, password);
+  } finally {
+    setLoading('btnLogin', false);
+  }
+}
+
+/* ── ДЕМО-ВХОД (если нет сервера) ── */
+function demoLogin(login, password) {
+  if (login.length < 3 || password.length < 3) {
+    const e = document.getElementById('loginError');
+    e.textContent = 'Неверный логин или пароль (демо: любой логин ≥3 символа)';
+    e.classList.add('show');
+    return;
+  }
+  localStorage.setItem('apteka_user', JSON.stringify({
+    id: 1, login, fullName: login, phone: '', token: 'demo_' + Date.now()
+  }));
+  showToast('✅ Вход выполнен (демо-режим)');
+  setTimeout(() => {
+    const back = new URLSearchParams(location.search).get('back');
+    window.location.href = back || 'index.html';
+  }, 600);
+}
+
+/* ── РЕГИСТРАЦИЯ ── */
+async function doRegister() {
+  const login     = document.getElementById('regLogin').value.trim();
+  const fullName  = document.getElementById('regFullName').value.trim();
+  const phone     = document.getElementById('regPhone').value.trim();
+  const password  = document.getElementById('regPassword').value;
+  const password2 = document.getElementById('regPassword2').value;
+  const errEl     = document.getElementById('regError');
+  const okEl      = document.getElementById('regSuccess');
+
+  errEl.classList.remove('show');
+  okEl.classList.remove('show');
+
+  // Валидация
+  let valid = true;
+  const loginOk = /^[a-zA-Zа-яёА-ЯЁ0-9_]{3,50}$/.test(login);
+  document.getElementById('regLogin').classList.toggle('error', !loginOk);
+  document.getElementById('errRegLogin').classList.toggle('show', !loginOk);
+  if (!loginOk) valid = false;
+
+  const passOk = password.length >= 6;
+  document.getElementById('regPassword').classList.toggle('error', !passOk);
+  document.getElementById('errRegPassword').classList.toggle('show', !passOk);
+  if (!passOk) valid = false;
+
+  const pass2Ok = password === password2;
+  document.getElementById('regPassword2').classList.toggle('error', !pass2Ok);
+  document.getElementById('errRegPassword2').classList.toggle('show', !pass2Ok);
+  if (!pass2Ok) valid = false;
+
+  if (!valid) return;
+
+  setLoading('btnRegister', true);
+
+  try {
+    const res  = await fetch(API_BASE, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'register', login, full_name: fullName, phone, password })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      okEl.textContent = '✅ Аккаунт создан! Выполняем вход...';
+      okEl.classList.add('show');
+      // Автовход
+      localStorage.setItem('apteka_user', JSON.stringify({
+        id: data.user_id, login, fullName, phone, token: data.token
+      }));
+      setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+    } else {
+      errEl.textContent = data.error || 'Ошибка регистрации';
+      errEl.classList.add('show');
+    }
+  } catch (e) {
+    // Нет сервера — демо-режим
+    demoRegister(login, fullName, phone);
+  } finally {
+    setLoading('btnRegister', false);
+  }
+}
+
+/* ── ДЕМО-РЕГИСТРАЦИЯ ── */
+function demoRegister(login, fullName, phone) {
+  const okEl = document.getElementById('regSuccess');
+  localStorage.setItem('apteka_user', JSON.stringify({
+    id: Date.now(), login, fullName: fullName || login, phone, token: 'demo_' + Date.now()
+  }));
+  okEl.textContent = '✅ Аккаунт создан (демо-режим)! Переходим...';
+  okEl.classList.add('show');
+  setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+}
+
+/* ── Синхронизация корзины ── */
+async function syncCartAfterLogin(token) {
+  try {
+    const localItems = JSON.parse(localStorage.getItem('apteka_cart') || '[]');
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'cart_get', token })
+    });
+    const data = await res.json();
+    const serverItems = data.items || [];
+    const merged = [...serverItems];
+    localItems.forEach(local => {
+      const idx = merged.findIndex(s => s.slug === local.slug);
+      if (idx >= 0) merged[idx].qty = Math.max(merged[idx].qty, local.qty);
+      else merged.push(local);
+    });
+    if (localItems.length > 0) {
+      await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cart_sync', token, items: merged })
+      });
+    }
+    localStorage.setItem('apteka_cart', JSON.stringify(merged));
+  } catch { /* нет сервера — ок */ }
+}
+
+/* ── Открыть нужный таб по хэшу ── */
+if (location.hash === '#register') switchTab('register');
+
+/* Enter для сабмита */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const activePanel = document.querySelector('.tab-content.active');
+  if (!activePanel) return;
+  if (activePanel.id === 'panelLogin') doLogin();
+  else doRegister();
+});
+</script>
+</body>
+</html>

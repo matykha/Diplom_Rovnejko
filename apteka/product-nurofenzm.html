@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Нурофензм — Аптека</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"IBM Plex Sans",sans-serif;background:#faf9f6;color:#162520;font-size:15px;line-height:1.6;}
+  :root{--green:#1a6b4a;--green-light:#2e9b6f;--green-pale:#e8f5ef;--border:#d4e4dc;--gray:#6b7a74;--white:#fff;--red:#d64040;--orange:#e07a30;}
+  
+  header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+  .header-top{background:var(--green);color:white;text-align:center;font-size:12px;padding:6px;}
+  .header-main{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:24px;}
+  .logo{font-family:"Playfair Display",serif;font-size:26px;font-weight:700;color:var(--green);text-decoration:none;display:flex;align-items:center;gap:8px;}
+  .search-bar{flex:1;display:flex;border:2px solid var(--green);border-radius:8px;overflow:hidden;}
+  .search-bar input{flex:1;border:none;padding:10px 16px;font-size:14px;outline:none;}
+  .search-bar button{background:var(--green);border:none;padding:10px 20px;color:white;cursor:pointer;}
+  .cart-btn{background:var(--green-pale);border:none;padding:10px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;color:var(--green);display:flex;align-items:center;gap:6px;}
+  nav{background:var(--white);border-bottom:1px solid var(--border);}
+  .nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;gap:0;}
+  .nav-inner a{text-decoration:none;color:var(--gray);font-size:13px;font-weight:500;padding:12px 16px;border-bottom:2px solid transparent;}
+  .nav-inner a:hover{color:var(--green);border-bottom-color:var(--green);}
+  
+  .breadcrumb{max-width:1200px;margin:0 auto;padding:16px 24px 0;font-size:13px;color:var(--gray);}
+  .breadcrumb a{color:var(--green);text-decoration:none;}
+  
+  .product-hero{max-width:1200px;margin:0 auto;padding:24px 24px 40px;display:grid;grid-template-columns:340px 1fr;gap:48px;align-items:start;}
+  .product-visual{background:linear-gradient(135deg,#f0f7f3,#e0f2ea);border-radius:20px;border:1px solid var(--border);padding:48px 40px;display:flex;flex-direction:column;align-items:center;gap:20px;position:sticky;top:100px;}
+  .product-icon{font-size:96px;}
+  .product-badge-big{font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;}
+  .badge-rx{background:#fce8e8;color:var(--red);}
+  .badge-otc{background:var(--green-pale);color:var(--green);}
+  .badge-sale{background:#fff3e0;color:var(--orange);}
+  .badge-generic{background:#e8eaf6;color:#3949ab;}
+  .price-block{text-align:center;}
+  .price-main{font-family:"Playfair Display",serif;font-size:42px;font-weight:700;color:var(--green);}
+  .price-old{font-size:18px;color:var(--gray);text-decoration:line-through;display:block;margin-top:4px;}
+  .btn-primary{width:100%;background:var(--green);color:white;border:none;padding:16px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;}
+  .btn-primary:hover{background:var(--green-light);}
+  .btn-secondary{width:100%;background:transparent;color:var(--green);border:2px solid var(--green);padding:14px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;}
+  .btn-secondary:hover{background:var(--green-pale);}
+  
+  .product-info{padding-top:8px;}
+  .product-cat-tag{font-size:12px;color:#0d7a6e;background:#e0f2ea;border-radius:4px;padding:3px 10px;display:inline-block;margin-bottom:12px;}
+  .product-title{font-family:"Playfair Display",serif;font-size:38px;font-weight:700;margin-bottom:6px;}
+  .product-inn-line{font-size:14px;color:var(--gray);margin-bottom:20px;}
+  .product-inn-line span{background:var(--green-pale);color:var(--green);padding:3px 10px;border-radius:4px;font-size:12px;margin-left:8px;}
+  .warning-box{background:#fff8e1;border:1px solid #ffe082;border-left:4px solid #f9a825;border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:24px;}
+  .info-section{margin-bottom:28px;}
+  .info-section-title{font-size:11px;font-weight:600;text-transform:uppercase;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .info-section-title::after{content:"";flex:1;height:1px;background:var(--border);}
+  .info-text{font-size:14px;line-height:1.8;color:#334d44;}
+  
+  .avail-table{width:100%;border-collapse:collapse;font-size:13px;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+  .avail-table th{background:var(--green-pale);padding:10px 14px;text-align:left;font-weight:600;font-size:11px;color:var(--green);}
+  .avail-table td{padding:12px 14px;border-bottom:1px solid var(--border);}
+  .avail-table tr:last-child td{border-bottom:none;}
+  .price-cell{font-weight:700;color:var(--green);}
+  
+  .booking-card{background:white;border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:28px;}
+  .booking-title{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;margin-bottom:6px;}
+  .booking-subtitle{font-size:13px;color:var(--gray);margin-bottom:20px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+  .form-row{display:flex;flex-direction:column;gap:5px;}
+  .form-row label{font-size:12px;font-weight:500;color:var(--gray);}
+  .form-row input,.form-row select{border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none;}
+  .form-row.full{grid-column:1/-1;}
+  .btn-book-full{width:100%;background:var(--green);color:white;border:none;padding:15px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;}
+  .btn-book-full:hover{background:var(--green-light);}
+  .book-notice{font-size:11px;color:var(--gray);text-align:center;margin-top:10px;}
+  
+  .related-section{max-width:1200px;margin:0 auto;padding:0 24px 48px;}
+  .section-title{font-family:"Playfair Display",serif;font-size:22px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+  .section-title::after{content:"";flex:1;height:1px;background:var(--border);}
+  .related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .related-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;text-decoration:none;color:var(--dark);display:flex;align-items:center;gap:14px;transition:all 0.2s;}
+  .related-card:hover{box-shadow:0 4px 16px rgba(26,107,74,0.1);transform:translateY(-2px);border-color:var(--green);}
+  .related-icon{font-size:36px;background:var(--green-pale);border-radius:10px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;}
+  .related-name{font-weight:600;font-size:13px;margin-bottom:2px;}
+  .related-price{font-size:13px;color:var(--green);font-weight:700;}
+  
+  footer{background:#162520;color:rgba(255,255,255,0.7);padding:32px 24px 20px;}
+  .footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;font-size:12px;align-items:center;}
+  .footer-logo{font-family:"Playfair Display",serif;font-size:20px;color:white;}
+  
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:white;padding:14px 20px;border-radius:10px;z-index:300;transform:translateY(80px);opacity:0;transition:all 0.3s;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .cart-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;justify-content:flex-end;}
+  .cart-modal.open{display:flex;}
+  .cart-panel{background:var(--white);width:480px;max-width:100vw;height:100%;display:flex;flex-direction:column;}
+  .cart-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;}
+  .cart-body{flex:1;overflow-y:auto;padding:16px 24px;}
+  .cart-footer{padding:20px 24px;border-top:1px solid var(--border);background:var(--cream);}
+  .order-success-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:600;align-items:center;justify-content:center;}
+  .order-success-modal.open{display:flex;}
+  .order-success-card{background:white;border-radius:20px;padding:52px 36px;text-align:center;max-width:400px;}
+  .btn-os-close{background:var(--green);color:white;border:none;padding:14px 32px;border-radius:10px;cursor:pointer;}
+  
+  .auth-btn-wrap{display:flex;align-items:center;gap:8px;}
+  .auth-user-btn{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--dark);background:var(--green-pale);padding:8px 14px;border-radius:8px;font-size:13px;}
+  .auth-avatar{width:28px;height:28px;background:var(--green);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">🕐 Пн–Пт 8:00–20:00 | 📞 +375 (17) 123-45-67</div>
+  <div class="header-main">
+    <a href="index.html" class="logo"><span>💊</span> Аптека</a>
+    <div class="search-bar">
+      <input type="text" id="mainSearch" placeholder="Поиск...">
+      <button onclick="window.location.href='index.html?search='+encodeURIComponent(document.getElementById('mainSearch').value)">🔍</button>
+    </div>
+    <div class="header-actions">
+      <button class="cart-btn" onclick="openCart()">🛒 Корзина</button>
+    </div>
+  </div>
+  <nav><div class="nav-inner"><a href="index.html">Каталог</a><a href="index.html#seasonal">Сезонное</a><a href="index.html#consult">Консультация</a></div></nav>
+</header>
+
+<div class="breadcrumb"><a href="index.html">Каталог</a> › <span>Обезболивающие / Противовоспалительные</span> › <span>Нурофензм</span></div>
+
+<div class="product-hero">
+  <div class="product-visual">
+    <div class="product-badge-big badge-otc">Без рецепта</div>
+    <div class="product-icon">💊</div>
+    <div class="price-block">
+      <div class="price-main">3,20 руб.</div>
+      <span class="price-old">4,10 руб.</span>
+    </div>
+    <button class="btn-primary" onclick="document.getElementById('bookForm').scrollIntoView({behavior:'smooth'})">🔒 Забронировать</button>
+    <button class="btn-secondary" onclick="cartAdd({slug:'nurofenzm',name:'Нурофензм',icon:'💊',price:'3,20',form:'Таблетки'})">🛒 В корзину</button>
+  </div>
+  <div class="product-info">
+    <div class="product-cat-tag">Обезболивающие / Противовоспалительные</div>
+    <h1 class="product-title">Нурофензм</h1>
+    <div class="product-inn-line">Ибупрофен 200 мг<span>Таблетки</span></div>
+    <div class="warning-box">⚕️ Перед применением проконсультируйтесь с врачом.</div>
+    
+    <div class="info-section"><div class="info-section-title">Описание</div><p class="info-text"></p></div>
+    <div class="info-section"><div class="info-section-title">Способ применения</div><p class="info-text"></p></div>
+    <div class="info-section"><div class="info-section-title">Противопоказания</div><p class="info-text"></p></div>
+    
+    <div class="info-section">
+      <div class="info-section-title">📍 Наличие по аптекам</div>
+      <table class="avail-table"><thead><tr><th>Адрес</th><th>Цена</th><th>Остаток</th><th>Режим работы</th></tr></thead><tbody><tr><td colspan="4" style="text-align:center;padding:30px;">Нет в наличии</td></tr></tbody></table>
+    </div>
+    
+    <div class="booking-card" id="bookForm">
+      <div class="booking-title">📋 Забронировать на 3 часа</div>
+      <div class="booking-subtitle">Укажите контакты — мы свяжемся с вами.</div>
+      <div class="form-grid">
+        <div class="form-row"><label>Имя</label><input type="text" id="bName" placeholder="Ваше имя"></div>
+        <div class="form-row"><label>Телефон</label><input type="tel" id="bPhone" placeholder="+375 (XX) XXX-XX-XX"></div>
+        <div class="form-row full"><label>Аптека</label><select id="bPharmacy"></select></div></div>
+      <button class="btn-book-full" onclick="submitBook()">🔒 Забронировать Нурофензм</button>
+      <p class="book-notice">Товар будет зарезервирован на 3 часа.</p>
+    </div>
+  </div>
+</div>
+
+<div class="related-section">
+  <h2 class="section-title">Другие препараты</h2>
+  <div class="related-grid" id="relatedGrid"></div>
+</div>
+
+<footer><div class="footer-bottom"><div class="footer-logo">💊 Аптека</div><span>© 2026 Аптека</span></div></footer>
+
+<div class="toast" id="toast"></div>
+<div class="cart-modal" id="cartModal"><div class="cart-panel"><div class="cart-header"><h2>🛒 Корзина</h2><button class="cart-close" onclick="closeCart()">✕</button></div><div class="cart-body" id="cartBody"></div><div class="cart-footer" id="cartFooter" style="display:none"><div class="cart-form-row"><input type="text" id="orderName" placeholder="Ваше имя"><input type="tel" id="orderPhone" placeholder="Телефон"></div><div class="cart-form-row"><select id="orderPharmacy"><option>ул. Ленина, 12</option><option>пр. Независимости, 45</option><option>ул. Притыцкого, 101</option></select></div><button class="btn-checkout" onclick="submitOrder()">🔒 Оформить бронь</button></div></div></div>
+<div class="order-success-modal" id="orderSuccessModal"><div class="order-success-card"><div class="os-icon">✅</div><div class="os-title">Бронь оформлена!</div><p class="os-text">Заказ зарезервирован на 3 часа.</p><button class="btn-os-close" onclick="document.getElementById('orderSuccessModal').classList.remove('open')">Отлично!</button></div></div>
+
+<script src="cart.js"></script>
+<script>
+function closeModal() { document.getElementById("orderSuccessModal").classList.remove("open"); }
+fetch("api.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"admin_products_get",token:""})})
+.then(r=>r.json()).then(d=>{if(d.products){let r=d.products.filter(p=>p.slug!="nurofenzm").slice(0,4);let h="";r.forEach(p=>{h+="<a href=\"product-"+p.slug+".html\" class=\"related-card\"><div class=\"related-icon\">"+(p.icon||"💊")+"</div><div><div class=\"related-name\">"+p.name+"</div><div class=\"related-price\">"+parseFloat(p.price).toFixed(2).replace(".",",")+" руб.</div></div></a>";});document.getElementById("relatedGrid").innerHTML=h;}});
+</script>
+</body>
+</html>
